@@ -6,30 +6,41 @@
 <title>Amazon DF → Wiise SO Tool | Advance Chemicals</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
+  /* Advance Chemicals Design System tokens */
   :root{
-    --bark:#26332B;
-    --eucalyptus:#4F7A64;
-    --eucalyptus-light:#7FA98C;
-    --sage-bg:#F4F3EE;
-    --panel:#FFFFFF;
-    --oak:#C9A76B;
-    --oak-dark:#A7864F;
-    --line:#DDE3DB;
-    --text:#26332B;
-    --text-soft:#5C6B62;
-    --warn-bg:#FCEFE6;
-    --warn-line:#E3A672;
+    --ac-navy:#263681;
+    --ac-navy-deep:#1E2C6B;
+    --ac-navy-100:#E8EBF5;
+    --ac-navy-50:#F2F4FB;
+    --ac-cyan:#00AEEF;
+    --ac-cyan-deep:#0098D1;
+    --ac-cyan-50:#E3F2FD;
+    --ac-ink:#3C3C3C;
+    --ac-ink-soft:#555E6B;
+    --ac-muted:#8A919A;
+    --ac-rule:#D5D3D0;
+    --ac-paper:#FFFFFF;
+    --ac-paper-warm:#F6F4F0;
+    --warn-bg:#FFF3E0;
+    --warn-line:#E0A050;
     --warn-text:#8A4B14;
-    --error:#B23B3B;
-    --shadow: 0 1px 2px rgba(38,51,43,0.06), 0 8px 24px rgba(38,51,43,0.06);
-    --radius: 10px;
+    --error:#C0392B;
+    --shadow-sm: 0 1px 2px rgba(38,54,129,0.08);
+    --shadow-md: 0 4px 12px rgba(38,54,129,0.10);
+    --r-sm:6px;
+    --r-md:10px;
+    --font-display:'Futura','Century Gothic',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --font-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--sage-bg);
-    color:var(--text);
-    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--ac-navy-50);
+    color:var(--ac-ink);
+    font-family:var(--font-body);
+    font-size:15px;
+    line-height:1.55;
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
   }
@@ -38,47 +49,47 @@
   /* Header */
   header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:32px;flex-wrap:wrap;}
   .brand-mark{display:flex;align-items:center;gap:12px;}
-  .brand-mark svg{flex-shrink:0;}
+  .brand-logo{height:40px;width:auto;flex-shrink:0;}
   h1{
-    font-family:'Fraunces',Georgia,serif;
-    font-size:28px;
-    font-weight:600;
-    letter-spacing:-0.01em;
+    font-family:var(--font-display);
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:-0.02em;
     margin:0 0 4px;
-    color:var(--bark);
+    color:var(--ac-navy);
   }
-  .subtitle{color:var(--text-soft);font-size:14px;margin:0;}
+  .subtitle{color:var(--ac-ink-soft);font-size:14px;margin:0;}
   .month-field{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
-  .month-field label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);}
+  .month-field label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ac-muted);font-family:var(--font-display);font-weight:600;}
   .month-field input{
-    border:1px solid var(--line);
-    background:var(--panel);
-    border-radius:8px;
+    border:1px solid var(--ac-rule);
+    background:var(--ac-paper);
+    border-radius:var(--r-sm);
     padding:8px 12px;
     font-size:14px;
-    font-family:inherit;
-    color:var(--text);
+    font-family:var(--font-body);
+    color:var(--ac-ink);
     width:180px;
   }
-  .month-field input:focus{outline:2px solid var(--eucalyptus-light);outline-offset:1px;}
+  .month-field input:focus{outline:2px solid var(--ac-cyan);outline-offset:1px;}
 
   /* Dropzone */
   #dropzone{
-    background:var(--panel);
-    border:1.5px dashed var(--eucalyptus-light);
-    border-radius:var(--radius);
+    background:var(--ac-paper);
+    border:1.5px dashed var(--ac-navy);
+    border-radius:var(--r-md);
     padding:40px 24px;
     text-align:center;
     cursor:pointer;
     transition:border-color .15s ease, background .15s ease;
-    box-shadow:var(--shadow);
+    box-shadow:var(--shadow-sm);
   }
-  #dropzone.drag{border-color:var(--eucalyptus);background:#EEF3EE;}
-  #dropzone svg{margin-bottom:10px;color:var(--eucalyptus);}
-  #dropzone .dz-title{font-weight:600;font-size:15px;margin-bottom:4px;}
-  #dropzone .dz-sub{font-size:13px;color:var(--text-soft);}
+  #dropzone.drag{border-color:var(--ac-cyan);background:var(--ac-cyan-50);}
+  #dropzone svg{margin-bottom:10px;color:var(--ac-navy);}
+  #dropzone .dz-title{font-family:var(--font-display);font-weight:600;font-size:15px;margin-bottom:4px;color:var(--ac-ink);}
+  #dropzone .dz-sub{font-size:13px;color:var(--ac-ink-soft);}
   #fileInput{display:none;}
-  #dropzone .dz-cols{font-size:11px;color:var(--text-soft);margin-top:14px;letter-spacing:.02em;}
+  #dropzone .dz-cols{font-size:11px;color:var(--ac-muted);margin-top:14px;letter-spacing:.02em;}
 
   /* Stats */
   #statsBar{
@@ -88,27 +99,28 @@
     margin:24px 0;
   }
   .stat{
-    background:var(--panel);
-    border-radius:var(--radius);
+    background:var(--ac-paper);
+    border-radius:var(--r-md);
     padding:16px 18px;
-    box-shadow:var(--shadow);
+    box-shadow:var(--shadow-sm);
+    border-top:3px solid var(--ac-cyan);
   }
-  .stat .num{font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;color:var(--bark);}
-  .stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);margin-top:2px;}
+  .stat .num{font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--ac-navy);}
+  .stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ac-muted);margin-top:2px;font-family:var(--font-display);font-weight:500;}
 
   /* Warning panel */
   #warnPanel{
     display:none;
     background:var(--warn-bg);
     border:1px solid var(--warn-line);
-    border-radius:var(--radius);
+    border-radius:var(--r-md);
     padding:14px 18px;
     margin-bottom:20px;
     font-size:13px;
     color:var(--warn-text);
   }
   #warnPanel strong{display:block;margin-bottom:4px;font-size:13px;}
-  #warnPanel .warn-list{margin-top:6px;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12px;line-height:1.7;word-break:break-word;}
+  #warnPanel .warn-list{margin-top:6px;font-family:var(--font-mono);font-size:12px;line-height:1.7;word-break:break-word;}
   #warnPanel label{display:inline-flex;align-items:center;gap:6px;margin-top:10px;cursor:pointer;font-size:13px;color:var(--warn-text);}
 
   /* Toolbar */
@@ -121,15 +133,15 @@
     flex-wrap:wrap;
   }
   #toolbar .left{display:flex;align-items:center;gap:10px;}
-  #toolbar h2{font-size:16px;margin:0;color:var(--bark);}
-  #toolbar .count{font-size:13px;color:var(--text-soft);}
+  #toolbar h2{font-family:var(--font-display);font-size:16px;margin:0;color:var(--ac-navy);font-weight:700;}
+  #toolbar .count{font-size:13px;color:var(--ac-muted);}
   .btn{
     border:none;
-    border-radius:8px;
+    border-radius:var(--r-sm);
     padding:9px 16px;
     font-size:13px;
     font-weight:600;
-    font-family:inherit;
+    font-family:var(--font-display);
     cursor:pointer;
     display:inline-flex;
     align-items:center;
@@ -137,61 +149,124 @@
     transition:transform .08s ease, box-shadow .15s ease;
   }
   .btn:active{transform:translateY(1px);}
-  .btn-primary{background:var(--oak);color:#3B2A0F;}
-  .btn-primary:hover{background:var(--oak-dark);color:#fff;}
-  .btn-ghost{background:var(--panel);color:var(--bark);border:1px solid var(--line);}
-  .btn-ghost:hover{border-color:var(--eucalyptus);}
-  .btn-new{background:transparent;color:var(--text-soft);text-decoration:underline;text-underline-offset:3px;padding:9px 4px;}
+  .btn-primary{background:var(--ac-cyan);color:#fff;}
+  .btn-primary:hover{background:var(--ac-cyan-deep);color:#fff;}
+  .btn-ghost{background:var(--ac-paper);color:var(--ac-navy);border:1px solid var(--ac-rule);}
+  .btn-ghost:hover{border-color:var(--ac-navy);color:var(--ac-navy);}
+  .btn-new{background:transparent;color:var(--ac-muted);text-decoration:underline;text-underline-offset:3px;padding:9px 4px;}
 
   /* Table */
   #tableWrap{
     display:none;
-    background:var(--panel);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
+    background:var(--ac-paper);
+    border-radius:var(--r-md);
+    box-shadow:var(--shadow-md);
     overflow:hidden;
   }
   table{width:100%;border-collapse:collapse;font-size:13px;}
   thead th{
-    background:var(--bark);
-    color:#EFEEE7;
+    background:var(--ac-navy);
+    color:#fff;
     text-align:left;
     padding:12px 14px;
     font-weight:600;
     font-size:11.5px;
+    font-family:var(--font-display);
     text-transform:uppercase;
     letter-spacing:.04em;
     cursor:pointer;
     user-select:none;
     white-space:nowrap;
   }
-  thead th:hover{background:#33453A;}
+  thead th:hover{background:var(--ac-navy-deep);}
   thead th .arrow{opacity:.5;font-size:10px;margin-left:4px;}
-  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
-  tbody tr:hover{background:#FAFBF9;}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--ac-rule);vertical-align:top;}
+  tbody tr:hover{background:var(--ac-navy-50);}
   tbody tr:last-child td{border-bottom:none;}
-  td.sku{font-family:'SF Mono',Menlo,Consolas,monospace;font-weight:600;color:var(--eucalyptus);white-space:nowrap;}
-  td.title{color:var(--text-soft);max-width:340px;line-height:1.4;}
+  td.sku{font-family:var(--font-mono);font-weight:600;color:var(--ac-navy);white-space:nowrap;}
+  td.title{color:var(--ac-ink-soft);max-width:340px;line-height:1.4;}
   td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
-  td.refs{max-width:220px;font-size:11px;color:var(--text-soft);font-family:'SF Mono',Menlo,Consolas,monospace;line-height:1.6;}
-  tfoot td{padding:13px 14px;font-weight:700;background:#F1F0E9;border-top:2px solid var(--bark);}
+  td.refs{max-width:220px;font-size:11px;color:var(--ac-muted);font-family:var(--font-mono);line-height:1.6;}
+  tfoot td{padding:13px 14px;font-weight:700;background:var(--ac-navy-100);border-top:2px solid var(--ac-navy);}
   tfoot td.num{text-align:right;font-variant-numeric:tabular-nums;}
 
   .toast{
     position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--bark);color:#fff;padding:12px 20px;border-radius:8px;
-    font-size:13px;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    background:var(--ac-navy);color:#fff;padding:12px 20px;border-radius:var(--r-sm);
+    font-size:13px;font-family:var(--font-display);box-shadow:var(--shadow-md);opacity:0;pointer-events:none;
     transition:opacity .2s ease, transform .2s ease;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--text-soft);line-height:1.7;}
-  footer b{color:var(--text);}
+  footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--ac-rule);font-size:12px;color:var(--ac-ink-soft);line-height:1.7;}
+  footer b{color:var(--ac-ink);}
 
   @media(max-width:800px){
     #statsBar{grid-template-columns:repeat(2,1fr);}
     td.title,td.refs{display:none;}
   }
+
+  /* Theme toggle — iOS-style pill switch */
+  .theme-switch{
+    position:fixed;top:16px;right:16px;z-index:100;
+    width:52px;height:28px;border-radius:14px;border:none;
+    background:#D5D3D0;cursor:pointer;padding:0;
+    box-shadow:inset 0 1px 3px rgba(0,0,0,0.12);
+    transition:background .25s ease;
+  }
+  .theme-switch::after{
+    content:'';display:block;
+    width:24px;height:24px;border-radius:50%;
+    background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,0.2);
+    margin:2px;
+    transition:transform .25s ease;
+  }
+  .theme-switch .switch-icon{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    display:flex;align-items:center;pointer-events:none;
+    font-size:13px;line-height:1;
+  }
+  .theme-switch .icon-sun{position:absolute;left:7px;top:6px;opacity:1;transition:opacity .2s ease;}
+  .theme-switch .icon-moon{position:absolute;right:7px;top:6px;opacity:0;transition:opacity .2s ease;}
+  [data-theme="dark"] .theme-switch{background:var(--ac-cyan);}
+  [data-theme="dark"] .theme-switch::after{transform:translateX(24px);}
+  [data-theme="dark"] .theme-switch .icon-sun{opacity:0;}
+  [data-theme="dark"] .theme-switch .icon-moon{opacity:1;}
+
+  /* ── Dark mode ── */
+  [data-theme="dark"]{
+      --ac-navy:#7DA0E8;
+      --ac-navy-deep:#5B80D0;
+      --ac-navy-100:#1E2640;
+      --ac-navy-50:#141A2E;
+      --ac-cyan:#3DC2F5;
+      --ac-cyan-deep:#2AB4E8;
+      --ac-cyan-50:#162030;
+      --ac-ink:#E4E6EB;
+      --ac-ink-soft:#A0A8B8;
+      --ac-muted:#6B7385;
+      --ac-rule:#2A3045;
+      --ac-paper:#1A1F30;
+      --ac-paper-warm:#151A28;
+      --warn-bg:#2C1E0E;
+      --warn-line:#8A6020;
+      --warn-text:#E8B860;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.30);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.40);
+  }
+  [data-theme="dark"] thead th{background:#1E2C6B;color:#D0D8F0;}
+  [data-theme="dark"] thead th:hover{background:#263681;}
+  [data-theme="dark"] tfoot td{background:#1A2240;border-top-color:#3A4570;}
+  [data-theme="dark"] tbody tr:hover{background:#1E2438;}
+  [data-theme="dark"] #dropzone{border-color:#3A4570;}
+  [data-theme="dark"] #dropzone.drag{border-color:var(--ac-cyan);background:#162030;}
+  [data-theme="dark"] .btn-primary{color:#0D1220;}
+  [data-theme="dark"] .btn-ghost{background:var(--ac-paper);border-color:var(--ac-rule);}
+  [data-theme="dark"] .btn-ghost:hover{border-color:var(--ac-navy);}
+  [data-theme="dark"] .toast{background:#263681;color:#fff;}
+  [data-theme="dark"] .brand-logo{background:rgba(255,255,255,0.9);border-radius:4px;padding:2px 4px;}
+  [data-theme="dark"] footer img{filter:brightness(0) invert(1);opacity:0.5 !important;}
 </style>
 </head>
 <body>
@@ -199,13 +274,10 @@
 
   <header>
     <div class="brand-mark">
-      <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
-        <circle cx="17" cy="17" r="17" fill="#4F7A64"/>
-        <path d="M17 6c3 4 7 7 7 12a7 7 0 1 1-14 0c0-5 4-8 7-12z" fill="#F4F3EE"/>
-      </svg>
+      <img src="ADVlogowhite background.png" alt="Advance Chemicals" class="brand-logo" />
       <div>
         <h1>Amazon DF → Wiise SO Tool</h1>
-        <p class="subtitle">Advance Chemicals — aggregate Direct Fulfilment invoices by SKU for monthly Sales Order entry</p>
+        <p class="subtitle">Aggregate Direct Fulfilment invoices by SKU for monthly Sales Order entry</p>
       </div>
     </div>
     <div class="month-field">
@@ -280,18 +352,43 @@
   </div>
 
   <footer>
-    <b>Monthly workflow:</b> export PAID Direct Fulfilment invoices from Amazon Vendor Central for the month → drop the CSV here →
-    review the summary (non-PAID rows are flagged and excluded by default) → download the CSV or copy it →
-    paste directly into your Wiise Sales Order lines, one row per SKU (use the ex GST value; GST is applied via tax code). Everything runs in your browser — no data leaves this page.
-    <br><br>
-    <b>Reconciling to Amazon's payment:</b> "Total Value (inc GST)" should match the sum of "Amount in Payment Currency" for this batch in Amazon's separate Payments export (allow a few cents of rounding across many lines). Note that Amazon's "Item Cost" column is already the extended line amount — not a per-unit price — so this tool does not multiply it by Quantity.
+    <div style="display:flex;align-items:flex-start;gap:20px;">
+      <div style="flex:1;">
+        <b>Monthly workflow:</b> export PAID Direct Fulfilment invoices from Amazon Vendor Central for the month → drop the CSV here →
+        review the summary (non-PAID rows are flagged and excluded by default) → download the CSV or copy it →
+        paste directly into your Wiise Sales Order lines, one row per SKU (use the ex GST value; GST is applied via tax code). Everything runs in your browser — no data leaves this page.
+        <br><br>
+        <b>Reconciling to Amazon's payment:</b> "Total Value (inc GST)" should match the sum of "Amount in Payment Currency" for this batch in Amazon's separate Payments export (allow a few cents of rounding across many lines). Note that Amazon's "Item Cost" column is already the extended line amount — not a per-unit price — so this tool does not multiply it by Quantity.
+      </div>
+      <img src="100% Owned And Made.png" alt="100% Australian Made &amp; Owned" style="width:56px;height:auto;flex-shrink:0;opacity:0.7;" />
+    </div>
   </footer>
 
 </div>
 
+<button class="theme-switch" id="themeToggle" title="Toggle dark mode"><span class="switch-icon"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></span></button>
 <div class="toast" id="toast"></div>
 
 <script>
+// Theme toggle — remembers preference in localStorage, defaults to system
+(function(){
+  const saved = localStorage.getItem('ac-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved ? saved === 'dark' : prefersDark) document.documentElement.setAttribute('data-theme','dark');
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('ac-theme','light');
+      } else {
+        document.documentElement.setAttribute('data-theme','dark');
+        localStorage.setItem('ac-theme','dark');
+      }
+    });
+  });
+})();
+
 const REQUIRED_COLS = ["Order ID","SKU","Item Title","Quantity","Item Cost","Status"];
 let rawRows = [];
 let summaryRows = [];
