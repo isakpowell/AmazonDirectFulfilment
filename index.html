@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazon DF → Wiise SO Tool | Advance Chemicals</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root{
+    --bark:#26332B;
+    --eucalyptus:#4F7A64;
+    --eucalyptus-light:#7FA98C;
+    --sage-bg:#F4F3EE;
+    --panel:#FFFFFF;
+    --oak:#C9A76B;
+    --oak-dark:#A7864F;
+    --line:#DDE3DB;
+    --text:#26332B;
+    --text-soft:#5C6B62;
+    --warn-bg:#FCEFE6;
+    --warn-line:#E3A672;
+    --warn-text:#8A4B14;
+    --error:#B23B3B;
+    --shadow: 0 1px 2px rgba(38,51,43,0.06), 0 8px 24px rgba(38,51,43,0.06);
+    --radius: 10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--sage-bg);
+    color:var(--text);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 24px 80px;}
+
+  /* Header */
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:32px;flex-wrap:wrap;}
+  .brand-mark{display:flex;align-items:center;gap:12px;}
+  .brand-mark svg{flex-shrink:0;}
+  h1{
+    font-family:'Fraunces',Georgia,serif;
+    font-size:28px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0 0 4px;
+    color:var(--bark);
+  }
+  .subtitle{color:var(--text-soft);font-size:14px;margin:0;}
+  .month-field{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
+  .month-field label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);}
+  .month-field input{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:14px;
+    font-family:inherit;
+    color:var(--text);
+    width:180px;
+  }
+  .month-field input:focus{outline:2px solid var(--eucalyptus-light);outline-offset:1px;}
+
+  /* Dropzone */
+  #dropzone{
+    background:var(--panel);
+    border:1.5px dashed var(--eucalyptus-light);
+    border-radius:var(--radius);
+    padding:40px 24px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+    box-shadow:var(--shadow);
+  }
+  #dropzone.drag{border-color:var(--eucalyptus);background:#EEF3EE;}
+  #dropzone svg{margin-bottom:10px;color:var(--eucalyptus);}
+  #dropzone .dz-title{font-weight:600;font-size:15px;margin-bottom:4px;}
+  #dropzone .dz-sub{font-size:13px;color:var(--text-soft);}
+  #fileInput{display:none;}
+  #dropzone .dz-cols{font-size:11px;color:var(--text-soft);margin-top:14px;letter-spacing:.02em;}
+
+  /* Stats */
+  #statsBar{
+    display:none;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+    margin:24px 0;
+  }
+  .stat{
+    background:var(--panel);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    box-shadow:var(--shadow);
+  }
+  .stat .num{font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;color:var(--bark);}
+  .stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);margin-top:2px;}
+
+  /* Warning panel */
+  #warnPanel{
+    display:none;
+    background:var(--warn-bg);
+    border:1px solid var(--warn-line);
+    border-radius:var(--radius);
+    padding:14px 18px;
+    margin-bottom:20px;
+    font-size:13px;
+    color:var(--warn-text);
+  }
+  #warnPanel strong{display:block;margin-bottom:4px;font-size:13px;}
+  #warnPanel .warn-list{margin-top:6px;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12px;line-height:1.7;word-break:break-word;}
+  #warnPanel label{display:inline-flex;align-items:center;gap:6px;margin-top:10px;cursor:pointer;font-size:13px;color:var(--warn-text);}
+
+  /* Toolbar */
+  #toolbar{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  #toolbar .left{display:flex;align-items:center;gap:10px;}
+  #toolbar h2{font-size:16px;margin:0;color:var(--bark);}
+  #toolbar .count{font-size:13px;color:var(--text-soft);}
+  .btn{
+    border:none;
+    border-radius:8px;
+    padding:9px 16px;
+    font-size:13px;
+    font-weight:600;
+    font-family:inherit;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    transition:transform .08s ease, box-shadow .15s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--oak);color:#3B2A0F;}
+  .btn-primary:hover{background:var(--oak-dark);color:#fff;}
+  .btn-ghost{background:var(--panel);color:var(--bark);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--eucalyptus);}
+  .btn-new{background:transparent;color:var(--text-soft);text-decoration:underline;text-underline-offset:3px;padding:9px 4px;}
+
+  /* Table */
+  #tableWrap{
+    display:none;
+    background:var(--panel);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{
+    background:var(--bark);
+    color:#EFEEE7;
+    text-align:left;
+    padding:12px 14px;
+    font-weight:600;
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    cursor:pointer;
+    user-select:none;
+    white-space:nowrap;
+  }
+  thead th:hover{background:#33453A;}
+  thead th .arrow{opacity:.5;font-size:10px;margin-left:4px;}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tbody tr:hover{background:#FAFBF9;}
+  tbody tr:last-child td{border-bottom:none;}
+  td.sku{font-family:'SF Mono',Menlo,Consolas,monospace;font-weight:600;color:var(--eucalyptus);white-space:nowrap;}
+  td.title{color:var(--text-soft);max-width:340px;line-height:1.4;}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td.refs{max-width:220px;font-size:11px;color:var(--text-soft);font-family:'SF Mono',Menlo,Consolas,monospace;line-height:1.6;}
+  tfoot td{padding:13px 14px;font-weight:700;background:#F1F0E9;border-top:2px solid var(--bark);}
+  tfoot td.num{text-align:right;font-variant-numeric:tabular-nums;}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--bark);color:#fff;padding:12px 20px;border-radius:8px;
+    font-size:13px;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--text-soft);line-height:1.7;}
+  footer b{color:var(--text);}
+
+  @media(max-width:800px){
+    #statsBar{grid-template-columns:repeat(2,1fr);}
+    td.title,td.refs{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand-mark">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="17" fill="#4F7A64"/>
+        <path d="M17 6c3 4 7 7 7 12a7 7 0 1 1-14 0c0-5 4-8 7-12z" fill="#F4F3EE"/>
+      </svg>
+      <div>
+        <h1>Amazon DF → Wiise SO Tool</h1>
+        <p class="subtitle">Advance Chemicals — aggregate Direct Fulfilment invoices by SKU for monthly Sales Order entry</p>
+      </div>
+    </div>
+    <div class="month-field">
+      <label for="monthInput">Batch label</label>
+      <input type="text" id="monthInput" placeholder="e.g. May 2026" />
+    </div>
+  </header>
+
+  <div id="dropzone">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+    <div class="dz-title">Drop your Amazon invoice export here, or click to browse</div>
+    <div class="dz-sub">Accepts the standard Vendor Central Direct Fulfilment CSV export</div>
+    <div class="dz-cols">Expected columns: Order ID · Invoice ID · Shipment Date · Invoice Date · VAT ID · ASIN · SKU · Item Title · Quantity · Item Cost · Tax Rate · Warehouse Code · Status</div>
+    <input type="file" id="fileInput" accept=".csv" />
+  </div>
+
+  <div id="statsBar">
+    <div class="stat"><div class="num" id="statLines">0</div><div class="label">Paid line items</div></div>
+    <div class="stat"><div class="num" id="statSkus">0</div><div class="label">Unique SKUs</div></div>
+    <div class="stat"><div class="num" id="statQty">0</div><div class="label">Total units</div></div>
+    <div class="stat"><div class="num" id="statValue">$0</div><div class="label">Total value (ex GST)</div></div>
+    <div class="stat"><div class="num" id="statValueGst">$0</div><div class="label">Total value (inc GST)</div></div>
+    <div class="stat"><div class="num" id="statOrders">0</div><div class="label">Orders included</div></div>
+  </div>
+
+  <div id="warnPanel">
+    <strong id="warnHeadline"></strong>
+    <span id="warnBody"></span>
+    <div class="warn-list" id="warnList"></div>
+    <label><input type="checkbox" id="includeNonPaid"> Include non-PAID rows in the summary anyway</label>
+  </div>
+
+  <div id="toolbar">
+    <div class="left">
+      <h2>SKU Summary</h2>
+      <span class="count" id="rowCount"></span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn btn-new" id="resetBtn">Load a different file</button>
+      <button class="btn btn-ghost" id="copyBtn">Copy for Wiise</button>
+      <button class="btn btn-primary" id="downloadBtn">Download CSV</button>
+    </div>
+  </div>
+
+  <div id="tableWrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-key="sku">SKU <span class="arrow">↕</span></th>
+          <th data-key="title">Item Title <span class="arrow">↕</span></th>
+          <th data-key="qty">Total Qty <span class="arrow">↕</span></th>
+          <th data-key="value">Total Value (ex GST) <span class="arrow">↕</span></th>
+          <th data-key="valueGst">Total Value (inc GST) <span class="arrow">↕</span></th>
+          <th data-key="avg">Avg Unit Price <span class="arrow">↕</span></th>
+          <th data-key="orders"># Orders <span class="arrow">↕</span></th>
+          <th>Order Refs</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">TOTAL</td>
+          <td class="num" id="footQty">0</td>
+          <td class="num" id="footValue">$0.00</td>
+          <td class="num" id="footValueGst">$0.00</td>
+          <td></td>
+          <td class="num" id="footOrders">0</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <footer>
+    <b>Monthly workflow:</b> export PAID Direct Fulfilment invoices from Amazon Vendor Central for the month → drop the CSV here →
+    review the summary (non-PAID rows are flagged and excluded by default) → download the CSV or copy it →
+    paste directly into your Wiise Sales Order lines, one row per SKU (use the ex GST value; GST is applied via tax code). Everything runs in your browser — no data leaves this page.
+    <br><br>
+    <b>Reconciling to Amazon's payment:</b> "Total Value (inc GST)" should match the sum of "Amount in Payment Currency" for this batch in Amazon's separate Payments export (allow a few cents of rounding across many lines). Note that Amazon's "Item Cost" column is already the extended line amount — not a per-unit price — so this tool does not multiply it by Quantity.
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const REQUIRED_COLS = ["Order ID","SKU","Item Title","Quantity","Item Cost","Status"];
+let rawRows = [];
+let summaryRows = [];
+let sortState = { key: "sku", dir: 1 };
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const statsBar = document.getElementById('statsBar');
+const warnPanel = document.getElementById('warnPanel');
+const toolbar = document.getElementById('toolbar');
+const tableWrap = document.getElementById('tableWrap');
+const includeNonPaid = document.getElementById('includeNonPaid');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+includeNonPaid.addEventListener('change', () => rebuildSummary());
+document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+document.getElementById('downloadBtn').addEventListener('click', downloadCsv);
+document.getElementById('copyBtn').addEventListener('click', copyForWiise);
+
+document.querySelectorAll('thead th[data-key]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (sortState.key === key) sortState.dir *= -1; else { sortState.key = key; sortState.dir = 1; }
+    renderTable();
+  });
+});
+
+function handleFile(file) {
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    showToast('Please upload a .csv file');
+    return;
+  }
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: results => {
+      const missing = REQUIRED_COLS.filter(c => !results.meta.fields.includes(c));
+      if (missing.length) {
+        showToast('Missing expected columns: ' + missing.join(', '));
+        return;
+      }
+      rawRows = results.data.filter(r => (r['Order ID'] || '').trim() !== '');
+      if (!document.getElementById('monthInput').value) {
+        const guess = file.name.match(/\d{4}[-_]?\d{2}|[A-Za-z]+\s?\d{4}/);
+        if (guess) document.getElementById('monthInput').value = guess[0];
+      }
+      rebuildSummary();
+    },
+    error: err => showToast('Could not parse file: ' + err.message)
+  });
+}
+
+function parseCost(v) {
+  if (v == null) return 0;
+  const n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+
+function rebuildSummary() {
+  const paidOnly = !includeNonPaid.checked;
+  const nonPaid = rawRows.filter(r => (r['Status'] || '').trim().toUpperCase() !== 'PAID');
+  const rows = paidOnly ? rawRows.filter(r => (r['Status'] || '').trim().toUpperCase() === 'PAID') : rawRows;
+
+  // Warning panel
+  if (nonPaid.length > 0) {
+    warnPanel.style.display = 'block';
+    document.getElementById('warnHeadline').textContent =
+      `${nonPaid.length} row${nonPaid.length > 1 ? 's are' : ' is'} not marked PAID.`;
+    document.getElementById('warnBody').textContent =
+      paidOnly ? ' These have been excluded from the summary below.' : ' These are currently included in the summary below.';
+    document.getElementById('warnList').textContent =
+      nonPaid.slice(0, 20).map(r => `${r['Order ID']} · ${r['SKU']} · ${r['Status'] || '(blank)'}`).join('  |  ') +
+      (nonPaid.length > 20 ? ` …and ${nonPaid.length - 20} more` : '');
+  } else {
+    warnPanel.style.display = 'none';
+  }
+
+  // Group by SKU
+  const map = new Map();
+  const orderSet = new Set();
+  let totalQty = 0, totalValue = 0, totalValueGst = 0;
+
+  rows.forEach(r => {
+    const sku = (r['SKU'] || '').trim();
+    if (!sku) return;
+    const qty = parseInt(r['Quantity'], 10) || 0;
+    // Amazon's "Item Cost" is already the EXTENDED ex-GST line amount for this
+    // SKU/order — NOT a per-unit price. Do not multiply by qty, or totals will
+    // overstate whenever qty > 1.
+    const lineValue = parseCost(r['Item Cost']);
+    const gstRate = parseFloat(String(r['Tax Rate'] || '0').replace('%', '')) / 100 || 0;
+    const lineValueGst = lineValue * (1 + gstRate);
+    orderSet.add(r['Order ID']);
+    totalQty += qty;
+    totalValue += lineValue;
+    totalValueGst += lineValueGst;
+
+    if (!map.has(sku)) {
+      map.set(sku, { sku, title: r['Item Title'] || '', qty: 0, value: 0, valueGst: 0, orders: new Set(), refs: [] });
+    }
+    const entry = map.get(sku);
+    entry.qty += qty;
+    entry.value += lineValue;
+    entry.valueGst += lineValueGst;
+    entry.orders.add(r['Order ID']);
+    entry.refs.push(r['Order ID']);
+  });
+
+  summaryRows = Array.from(map.values()).map(e => ({
+    sku: e.sku,
+    title: e.title,
+    qty: e.qty,
+    value: e.value,
+    valueGst: e.valueGst,
+    avg: e.qty ? e.value / e.qty : 0,
+    orders: e.orders.size,
+    refs: e.refs.join(', ')
+  }));
+
+  document.getElementById('statLines').textContent = rows.length.toLocaleString();
+  document.getElementById('statSkus').textContent = summaryRows.length.toLocaleString();
+  document.getElementById('statQty').textContent = totalQty.toLocaleString();
+  document.getElementById('statValue').textContent = formatCurrency(totalValue);
+  document.getElementById('statValueGst').textContent = formatCurrency(totalValueGst);
+  document.getElementById('statOrders').textContent = orderSet.size.toLocaleString();
+  document.getElementById('rowCount').textContent = `${summaryRows.length} SKUs from ${rows.length} paid line items`;
+
+  statsBar.style.display = 'grid';
+  toolbar.style.display = 'flex';
+  tableWrap.style.display = 'block';
+
+
+  renderTable();
+}
+
+function formatCurrency(n) {
+  return '$' + n.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function renderTable() {
+  const { key, dir } = sortState;
+  const sorted = [...summaryRows].sort((a, b) => {
+    let av = a[key], bv = b[key];
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+    return 0;
+  });
+
+  document.querySelectorAll('thead th[data-key]').forEach(th => {
+    const arrow = th.querySelector('.arrow');
+    arrow.textContent = th.dataset.key === key ? (dir === 1 ? '↑' : '↓') : '↕';
+  });
+
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = sorted.map(r => `
+    <tr>
+      <td class="sku">${escapeHtml(r.sku)}</td>
+      <td class="title">${escapeHtml(r.title)}</td>
+      <td class="num">${r.qty.toLocaleString()}</td>
+      <td class="num">${formatCurrency(r.value)}</td>
+      <td class="num">${formatCurrency(r.valueGst)}</td>
+      <td class="num">${formatCurrency(r.avg)}</td>
+      <td class="num">${r.orders}</td>
+      <td class="refs">${escapeHtml(r.refs)}</td>
+    </tr>
+  `).join('');
+
+  const totalQty = summaryRows.reduce((s, r) => s + r.qty, 0);
+  const totalValue = summaryRows.reduce((s, r) => s + r.value, 0);
+  const totalValueGst = summaryRows.reduce((s, r) => s + r.valueGst, 0);
+  const totalOrders = summaryRows.reduce((s, r) => s + r.orders, 0);
+  document.getElementById('footQty').textContent = totalQty.toLocaleString();
+  document.getElementById('footValue').textContent = formatCurrency(totalValue);
+  document.getElementById('footValueGst').textContent = formatCurrency(totalValueGst);
+  document.getElementById('footOrders').textContent = totalOrders.toLocaleString();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function buildExportRows() {
+  const sorted = [...summaryRows].sort((a, b) => a.sku.localeCompare(b.sku));
+  const header = ['SKU', 'Item Title', 'Total Qty', 'Total Value (ex GST)', 'Total Value (inc GST)', 'Avg Unit Price (ex GST)', '# Orders', 'Order Refs'];
+  const body = sorted.map(r => [r.sku, r.title, r.qty, r.value.toFixed(2), r.valueGst.toFixed(2), r.avg.toFixed(2), r.orders, r.refs]);
+  return [header, ...body];
+}
+
+function downloadCsv() {
+  const rows = buildExportRows();
+  const csv = rows.map(row => row.map(cell => {
+    const s = String(cell);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  }).join(',')).join('\n');
+  const label = (document.getElementById('monthInput').value || 'batch').trim().replace(/\s+/g, '_');
+  const filename = `Amazon_SKU_Summary_${label}.csv`;
+
+  // Data-URI download: more reliable than a Blob URL when this file is opened
+  // directly from disk (file://), where some browsers block Blob downloads.
+  const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent('\uFEFF' + csv);
+  const a = document.createElement('a');
+  a.href = dataUri;
+  a.download = filename;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('CSV downloaded');
+}
+
+function copyForWiise() {
+  const rows = buildExportRows();
+  const tsv = rows.map(row => row.join('\t')).join('\n');
+
+  function fallbackCopy() {
+    const ta = document.createElement('textarea');
+    ta.value = tsv;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    showToast(ok ? 'Copied — paste straight into Wiise or Excel' : 'Could not copy — try Download CSV instead');
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+    navigator.clipboard.writeText(tsv).then(
+      () => showToast('Copied — paste straight into Wiise or Excel'),
+      fallbackCopy
+    );
+  } else {
+    fallbackCopy();
+  }
+}
+
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+</script>
+</body>
+</html>
