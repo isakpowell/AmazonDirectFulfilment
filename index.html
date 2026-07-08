@@ -28,8 +28,10 @@
     --error:#C0392B;
     --shadow-sm: 0 1px 2px rgba(38,54,129,0.08);
     --shadow-md: 0 4px 12px rgba(38,54,129,0.10);
+    --shadow-lg: 0 12px 32px rgba(38,54,129,0.14);
     --r-sm:6px;
     --r-md:10px;
+    --r-lg:16px;
     --font-display:'Futura','Century Gothic',system-ui,sans-serif;
     --font-body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
     --font-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -45,71 +47,130 @@
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
   }
-  .wrap{max-width:1180px;margin:0 auto;padding:40px 24px 80px;}
 
-  /* Header */
-  header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:32px;flex-wrap:wrap;}
-  .brand-mark{display:flex;align-items:center;gap:12px;}
-  .brand-logo{height:40px;width:auto;flex-shrink:0;}
-  h1{
+  /* ── Hero banner ── */
+  .hero{
+    background:var(--ac-navy);
+    padding:0 0 48px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:'';position:absolute;bottom:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg, var(--ac-cyan) 0%, var(--ac-navy-deep) 100%);
+  }
+  .hero-inner{
+    max-width:1180px;margin:0 auto;padding:28px 24px 0;
+  }
+  .hero-top{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    margin-bottom:32px;padding-right:44px;
+  }
+  .hero-top .brand-logo{height:36px;width:auto;}
+  .hero-badge{
+    font-family:var(--font-display);font-size:11px;font-weight:600;
+    color:var(--ac-cyan);letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid rgba(0,174,239,0.3);border-radius:var(--r-sm);
+    padding:4px 10px;
+  }
+  .hero-content{max-width:640px;}
+  .hero h1{
     font-family:var(--font-display);
-    font-size:26px;
+    font-size:36px;
     font-weight:700;
     letter-spacing:-0.02em;
-    margin:0 0 4px;
-    color:var(--ac-navy);
+    margin:0 0 10px;
+    color:#fff;
+    line-height:1.15;
   }
-  .subtitle{color:var(--ac-ink-soft);font-size:14px;margin:0;}
-  .month-field{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
-  .month-field label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ac-muted);font-family:var(--font-display);font-weight:600;}
-  .month-field input{
-    border:1px solid var(--ac-rule);
-    background:var(--ac-paper);
-    border-radius:var(--r-sm);
-    padding:8px 12px;
-    font-size:14px;
-    font-family:var(--font-body);
-    color:var(--ac-ink);
-    width:180px;
+  .hero .subtitle{
+    color:rgba(255,255,255,0.65);font-size:15px;margin:0;line-height:1.5;
   }
-  .month-field input:focus{outline:2px solid var(--ac-cyan);outline-offset:1px;}
 
-  /* Dropzone */
-  #dropzone{
+  /* ── Main content ── */
+  .main{max-width:1180px;margin:0 auto;padding:0 24px 80px;}
+
+  /* ── Upload section ── */
+  .upload-section{
+    margin-top:-24px;
+    position:relative;
+    z-index:1;
+  }
+  .upload-card{
     background:var(--ac-paper);
-    border:1.5px dashed var(--ac-navy);
+    border-radius:var(--r-lg);
+    box-shadow:var(--shadow-lg);
+    padding:32px;
+    display:flex;
+    gap:24px;
+    align-items:stretch;
+  }
+  #dropzone{
+    flex:1;
+    background:var(--ac-navy-50);
+    border:2px dashed var(--ac-rule);
     border-radius:var(--r-md);
-    padding:40px 24px;
+    padding:48px 32px;
     text-align:center;
     cursor:pointer;
-    transition:border-color .15s ease, background .15s ease;
-    box-shadow:var(--shadow-sm);
+    transition:border-color .2s ease, background .2s ease, box-shadow .2s ease;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:200px;
   }
-  #dropzone.drag{border-color:var(--ac-cyan);background:var(--ac-cyan-50);}
-  #dropzone svg{margin-bottom:10px;color:var(--ac-navy);}
-  #dropzone .dz-title{font-family:var(--font-display);font-weight:600;font-size:15px;margin-bottom:4px;color:var(--ac-ink);}
-  #dropzone .dz-sub{font-size:13px;color:var(--ac-ink-soft);}
+  #dropzone:hover{border-color:var(--ac-navy);background:var(--ac-navy-100);}
+  #dropzone.drag{border-color:var(--ac-cyan);background:var(--ac-cyan-50);box-shadow:inset 0 0 0 2px var(--ac-cyan);}
+  #dropzone .dz-icon{
+    width:56px;height:56px;border-radius:50%;
+    background:var(--ac-navy);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:16px;
+  }
+  #dropzone .dz-icon svg{color:#fff;}
+  #dropzone .dz-title{font-family:var(--font-display);font-weight:600;font-size:17px;margin-bottom:6px;color:var(--ac-ink);}
+  #dropzone .dz-sub{font-size:13px;color:var(--ac-ink-soft);margin-bottom:0;}
   #fileInput{display:none;}
-  #dropzone .dz-cols{font-size:11px;color:var(--ac-muted);margin-top:14px;letter-spacing:.02em;}
+  #dropzone .dz-cols{font-size:11px;color:var(--ac-muted);margin-top:16px;letter-spacing:.02em;line-height:1.6;}
 
-  /* Stats */
+  .upload-sidebar{
+    width:220px;flex-shrink:0;
+    display:flex;flex-direction:column;gap:20px;
+    justify-content:center;
+  }
+  .upload-sidebar .month-field{display:flex;flex-direction:column;gap:6px;}
+  .upload-sidebar .month-field label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--ac-muted);font-family:var(--font-display);font-weight:600;
+  }
+  .upload-sidebar .month-field input{
+    border:1px solid var(--ac-rule);background:var(--ac-paper);
+    border-radius:var(--r-sm);padding:10px 14px;font-size:14px;
+    font-family:var(--font-body);color:var(--ac-ink);width:100%;
+  }
+  .upload-sidebar .month-field input:focus{outline:2px solid var(--ac-cyan);outline-offset:1px;}
+  .upload-sidebar .sidebar-hint{
+    font-size:12px;color:var(--ac-muted);line-height:1.5;
+    border-top:1px solid var(--ac-rule);padding-top:16px;
+  }
+  .upload-sidebar .sidebar-hint b{color:var(--ac-ink-soft);font-weight:600;}
+
+  /* ── Stats ── */
   #statsBar{
     display:none;
-    grid-template-columns:repeat(6,1fr);
+    grid-template-columns:repeat(3,1fr);
     gap:14px;
-    margin:24px 0;
+    margin:28px 0;
   }
   .stat{
     background:var(--ac-paper);
     border-radius:var(--r-md);
-    padding:16px 18px;
+    padding:20px 22px;
     box-shadow:var(--shadow-sm);
-    border-top:3px solid var(--ac-cyan);
+    border-left:4px solid var(--ac-cyan);
   }
-  .stat .num{font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--ac-navy);}
-  .stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ac-muted);margin-top:2px;font-family:var(--font-display);font-weight:500;}
+  .stat .num{font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--ac-navy);}
+  .stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ac-muted);margin-top:4px;font-family:var(--font-display);font-weight:500;}
 
-  /* Warning panel */
+  /* ── Warning panel ── */
   #warnPanel{
     display:none;
     background:var(--warn-bg);
@@ -124,7 +185,7 @@
   #warnPanel .warn-list{margin-top:6px;font-family:var(--font-mono);font-size:12px;line-height:1.7;word-break:break-word;}
   #warnPanel label{display:inline-flex;align-items:center;gap:6px;margin-top:10px;cursor:pointer;font-size:13px;color:var(--warn-text);}
 
-  /* Toolbar */
+  /* ── Toolbar ── */
   #toolbar{
     display:none;
     align-items:center;
@@ -156,7 +217,7 @@
   .btn-ghost:hover{border-color:var(--ac-navy);color:var(--ac-navy);}
   .btn-new{background:transparent;color:var(--ac-muted);text-decoration:underline;text-underline-offset:3px;padding:9px 4px;}
 
-  /* Table */
+  /* ── Table ── */
   #tableWrap{
     display:none;
     background:var(--ac-paper);
@@ -199,41 +260,48 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-  footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--ac-rule);font-size:12px;color:var(--ac-ink-soft);line-height:1.7;}
+  footer{
+    margin-top:36px;padding:20px 0 0;
+    border-top:1px solid var(--ac-rule);
+    font-size:12px;color:var(--ac-ink-soft);line-height:1.7;
+    display:flex;align-items:flex-start;gap:20px;
+  }
+  footer .footer-text{flex:1;}
   footer b{color:var(--ac-ink);}
 
-  @media(max-width:800px){
+  @media(max-width:900px){
+    .upload-card{flex-direction:column;}
+    .upload-sidebar{width:100%;flex-direction:row;align-items:flex-end;}
+    .upload-sidebar .month-field{flex:1;}
+    .upload-sidebar .sidebar-hint{border-top:none;border-left:1px solid var(--ac-rule);padding:0 0 0 16px;}
     #statsBar{grid-template-columns:repeat(2,1fr);}
     td.title,td.refs{display:none;}
   }
+  @media(max-width:600px){
+    .hero h1{font-size:26px;}
+    .upload-sidebar{flex-direction:column;}
+    .upload-sidebar .sidebar-hint{border-left:none;border-top:1px solid var(--ac-rule);padding:16px 0 0;}
+    #statsBar{grid-template-columns:1fr 1fr;}
+  }
 
-  /* Theme toggle — iOS-style pill switch */
-  .theme-switch{
-    position:fixed;top:16px;right:16px;z-index:100;
-    width:52px;height:28px;border-radius:14px;border:none;
-    background:#D5D3D0;cursor:pointer;padding:0;
-    box-shadow:inset 0 1px 3px rgba(0,0,0,0.12);
-    transition:background .25s ease;
+  /* ── Theme toggle ── */
+  .theme-toggle{
+    position:absolute;top:28px;right:24px;z-index:100;
+    width:34px;height:34px;border:1px solid rgba(255,255,255,0.15);
+    border-radius:var(--r-sm);background:rgba(255,255,255,0.08);
+    cursor:pointer;padding:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .2s ease, border-color .2s ease;
   }
-  .theme-switch::after{
-    content:'';display:block;
-    width:24px;height:24px;border-radius:50%;
-    background:#fff;
-    box-shadow:0 1px 3px rgba(0,0,0,0.2);
-    margin:2px;
-    transition:transform .25s ease;
-  }
-  .theme-switch .switch-icon{
-    position:absolute;top:0;left:0;width:100%;height:100%;
-    display:flex;align-items:center;pointer-events:none;
-    font-size:13px;line-height:1;
-  }
-  .theme-switch .icon-sun{position:absolute;left:7px;top:6px;opacity:1;transition:opacity .2s ease;}
-  .theme-switch .icon-moon{position:absolute;right:7px;top:6px;opacity:0;transition:opacity .2s ease;}
-  [data-theme="dark"] .theme-switch{background:var(--ac-cyan);}
-  [data-theme="dark"] .theme-switch::after{transform:translateX(24px);}
-  [data-theme="dark"] .theme-switch .icon-sun{opacity:0;}
-  [data-theme="dark"] .theme-switch .icon-moon{opacity:1;}
+  .theme-toggle:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);}
+  .theme-toggle svg{width:18px;height:18px;color:rgba(255,255,255,0.7);transition:color .2s ease;}
+  .theme-toggle:hover svg{color:#fff;}
+  .theme-toggle .icon-sun{display:block;}
+  .theme-toggle .icon-moon{display:none;}
+  [data-theme="dark"] .theme-toggle .icon-sun{display:none;}
+  [data-theme="dark"] .theme-toggle .icon-moon{display:block;}
+  [data-theme="dark"] .theme-toggle{border-color:var(--ac-rule);background:rgba(255,255,255,0.05);}
+  [data-theme="dark"] .theme-toggle:hover{border-color:var(--ac-cyan);background:rgba(0,174,239,0.1);}
 
   /* ── Dark mode ── */
   [data-theme="dark"]{
@@ -255,106 +323,136 @@
       --warn-text:#E8B860;
       --shadow-sm: 0 1px 2px rgba(0,0,0,0.30);
       --shadow-md: 0 4px 12px rgba(0,0,0,0.40);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.50);
   }
+  [data-theme="dark"] .hero{background:#0E1428;}
+  [data-theme="dark"] .hero::after{background:linear-gradient(90deg,var(--ac-cyan) 0%,#0E1428 100%);}
+  [data-theme="dark"] .hero-top .brand-logo{opacity:0.9;}
+  [data-theme="dark"] .hero-badge{color:var(--ac-cyan);border-color:rgba(61,194,245,0.25);}
+  [data-theme="dark"] #dropzone{background:var(--ac-navy-100);border-color:var(--ac-rule);}
+  [data-theme="dark"] #dropzone:hover{border-color:var(--ac-muted);background:#1E2640;}
+  [data-theme="dark"] #dropzone.drag{border-color:var(--ac-cyan);background:#162030;box-shadow:inset 0 0 0 2px var(--ac-cyan);}
+  [data-theme="dark"] #dropzone .dz-icon{background:var(--ac-navy-100);border:1px solid var(--ac-rule);}
   [data-theme="dark"] thead th{background:#1E2C6B;color:#D0D8F0;}
   [data-theme="dark"] thead th:hover{background:#263681;}
   [data-theme="dark"] tfoot td{background:#1A2240;border-top-color:#3A4570;}
   [data-theme="dark"] tbody tr:hover{background:#1E2438;}
-  [data-theme="dark"] #dropzone{border-color:#3A4570;}
-  [data-theme="dark"] #dropzone.drag{border-color:var(--ac-cyan);background:#162030;}
   [data-theme="dark"] .btn-primary{color:#0D1220;}
   [data-theme="dark"] .btn-ghost{background:var(--ac-paper);border-color:var(--ac-rule);}
   [data-theme="dark"] .btn-ghost:hover{border-color:var(--ac-navy);}
   [data-theme="dark"] .toast{background:#263681;color:#fff;}
-  [data-theme="dark"] .brand-logo{background:rgba(255,255,255,0.9);border-radius:4px;padding:2px 4px;}
   [data-theme="dark"] footer img{filter:brightness(0) invert(1);opacity:0.5 !important;}
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <header>
-    <div class="brand-mark">
-      <img src="ADVlogowhite background.png" alt="Advance Chemicals" class="brand-logo" />
-      <div>
-        <h1>Amazon DF → Wiise SO Tool</h1>
-        <p class="subtitle">Aggregate Direct Fulfilment invoices by SKU for monthly Sales Order entry</p>
+  <!-- Hero Banner -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-top">
+        <img src="advlogowhite.png" alt="Advance Chemicals" class="brand-logo" />
+        <span class="hero-badge">Internal Tool</span>
+      </div>
+      <div class="hero-content">
+        <h1>Amazon DF → Wiise<br>Sales Order Tool</h1>
+        <p class="subtitle">Aggregate Direct Fulfilment invoices by SKU for monthly Sales Order entry into Wiise.</p>
       </div>
     </div>
-    <div class="month-field">
-      <label for="monthInput">Batch label</label>
-      <input type="text" id="monthInput" placeholder="e.g. May 2026" />
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark mode"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Upload Card (overlaps hero) -->
+    <div class="upload-section">
+      <div class="upload-card">
+        <div id="dropzone">
+          <div class="dz-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          </div>
+          <div class="dz-title">Drop your Amazon invoice export here</div>
+          <div class="dz-sub">or click to browse for the Vendor Central Direct Fulfilment CSV</div>
+          <div class="dz-cols">Expected: Order ID, Invoice ID, Shipment Date, Invoice Date, VAT ID, ASIN, SKU, Item Title, Quantity, Item Cost, Tax Rate, Warehouse Code, Status</div>
+          <input type="file" id="fileInput" accept=".csv" />
+        </div>
+        <div class="upload-sidebar">
+          <div class="month-field">
+            <label for="monthInput">Batch label</label>
+            <input type="text" id="monthInput" placeholder="e.g. May 2026" />
+          </div>
+          <div class="sidebar-hint">
+            <b>How it works</b><br>
+            Upload your monthly CSV export. The tool groups line items by SKU, calculates totals, and produces a summary ready for Wiise Sales Order entry.
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
 
-  <div id="dropzone">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
-    <div class="dz-title">Drop your Amazon invoice export here, or click to browse</div>
-    <div class="dz-sub">Accepts the standard Vendor Central Direct Fulfilment CSV export</div>
-    <div class="dz-cols">Expected columns: Order ID · Invoice ID · Shipment Date · Invoice Date · VAT ID · ASIN · SKU · Item Title · Quantity · Item Cost · Tax Rate · Warehouse Code · Status</div>
-    <input type="file" id="fileInput" accept=".csv" />
-  </div>
-
-  <div id="statsBar">
-    <div class="stat"><div class="num" id="statLines">0</div><div class="label">Paid line items</div></div>
-    <div class="stat"><div class="num" id="statSkus">0</div><div class="label">Unique SKUs</div></div>
-    <div class="stat"><div class="num" id="statQty">0</div><div class="label">Total units</div></div>
-    <div class="stat"><div class="num" id="statValue">$0</div><div class="label">Total value (ex GST)</div></div>
-    <div class="stat"><div class="num" id="statValueGst">$0</div><div class="label">Total value (inc GST)</div></div>
-    <div class="stat"><div class="num" id="statOrders">0</div><div class="label">Orders included</div></div>
-  </div>
-
-  <div id="warnPanel">
-    <strong id="warnHeadline"></strong>
-    <span id="warnBody"></span>
-    <div class="warn-list" id="warnList"></div>
-    <label><input type="checkbox" id="includeNonPaid"> Include non-PAID rows in the summary anyway</label>
-  </div>
-
-  <div id="toolbar">
-    <div class="left">
-      <h2>SKU Summary</h2>
-      <span class="count" id="rowCount"></span>
+    <!-- Stats -->
+    <div id="statsBar">
+      <div class="stat"><div class="num" id="statLines">0</div><div class="label">Paid line items</div></div>
+      <div class="stat"><div class="num" id="statSkus">0</div><div class="label">Unique SKUs</div></div>
+      <div class="stat"><div class="num" id="statQty">0</div><div class="label">Total units</div></div>
+      <div class="stat"><div class="num" id="statValue">$0</div><div class="label">Total value (ex GST)</div></div>
+      <div class="stat"><div class="num" id="statValueGst">$0</div><div class="label">Total value (inc GST)</div></div>
+      <div class="stat"><div class="num" id="statOrders">0</div><div class="label">Orders included</div></div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="btn btn-new" id="resetBtn">Load a different file</button>
-      <button class="btn btn-ghost" id="copyBtn">Copy for Wiise</button>
-      <button class="btn btn-primary" id="downloadBtn">Download CSV</button>
+
+    <!-- Warning -->
+    <div id="warnPanel">
+      <strong id="warnHeadline"></strong>
+      <span id="warnBody"></span>
+      <div class="warn-list" id="warnList"></div>
+      <label><input type="checkbox" id="includeNonPaid"> Include non-PAID rows in the summary anyway</label>
     </div>
-  </div>
 
-  <div id="tableWrap">
-    <table>
-      <thead>
-        <tr>
-          <th data-key="sku">SKU <span class="arrow">↕</span></th>
-          <th data-key="title">Item Title <span class="arrow">↕</span></th>
-          <th data-key="qty">Total Qty <span class="arrow">↕</span></th>
-          <th data-key="value">Total Value (ex GST) <span class="arrow">↕</span></th>
-          <th data-key="valueGst">Total Value (inc GST) <span class="arrow">↕</span></th>
-          <th data-key="avg">Avg Unit Price <span class="arrow">↕</span></th>
-          <th data-key="orders"># Orders <span class="arrow">↕</span></th>
-          <th>Order Refs</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2">TOTAL</td>
-          <td class="num" id="footQty">0</td>
-          <td class="num" id="footValue">$0.00</td>
-          <td class="num" id="footValueGst">$0.00</td>
-          <td></td>
-          <td class="num" id="footOrders">0</td>
-          <td></td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+    <!-- Toolbar -->
+    <div id="toolbar">
+      <div class="left">
+        <h2>SKU Summary</h2>
+        <span class="count" id="rowCount"></span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-new" id="resetBtn">Load a different file</button>
+        <button class="btn btn-ghost" id="copyBtn">Copy for Wiise</button>
+        <button class="btn btn-primary" id="downloadBtn">Download CSV</button>
+      </div>
+    </div>
 
-  <footer>
-    <div style="display:flex;align-items:flex-start;gap:20px;">
-      <div style="flex:1;">
+    <!-- Table -->
+    <div id="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-key="sku">SKU <span class="arrow">↕</span></th>
+            <th data-key="title">Item Title <span class="arrow">↕</span></th>
+            <th data-key="qty">Total Qty <span class="arrow">↕</span></th>
+            <th data-key="value">Total Value (ex GST) <span class="arrow">↕</span></th>
+            <th data-key="valueGst">Total Value (inc GST) <span class="arrow">↕</span></th>
+            <th data-key="avg">Unit Cost <span class="arrow">↕</span></th>
+            <th data-key="orders"># Orders <span class="arrow">↕</span></th>
+            <th>Order Refs</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">TOTAL</td>
+            <td class="num" id="footQty">0</td>
+            <td class="num" id="footValue">$0.00</td>
+            <td class="num" id="footValueGst">$0.00</td>
+            <td></td>
+            <td class="num" id="footOrders">0</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-text">
         <b>Monthly workflow:</b> export PAID Direct Fulfilment invoices from Amazon Vendor Central for the month → drop the CSV here →
         review the summary (non-PAID rows are flagged and excluded by default) → download the CSV or copy it →
         paste directly into your Wiise Sales Order lines, one row per SKU (use the ex GST value; GST is applied via tax code). Everything runs in your browser — no data leaves this page.
@@ -362,16 +460,14 @@
         <b>Reconciling to Amazon's payment:</b> "Total Value (inc GST)" should match the sum of "Amount in Payment Currency" for this batch in Amazon's separate Payments export (allow a few cents of rounding across many lines). Note that Amazon's "Item Cost" column is already the extended line amount — not a per-unit price — so this tool does not multiply it by Quantity.
       </div>
       <img src="LRQA Certified Blue.svg" alt="LRQA Certified" style="width:56px;height:auto;flex-shrink:0;" />
-    </div>
-  </footer>
+    </footer>
 
-</div>
+  </div>
 
-<button class="theme-switch" id="themeToggle" title="Toggle dark mode"><span class="switch-icon"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></span></button>
 <div class="toast" id="toast"></div>
 
 <script>
-// Theme toggle — remembers preference in localStorage, defaults to system
+// Theme toggle
 (function(){
   const saved = localStorage.getItem('ac-theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -461,7 +557,6 @@ function rebuildSummary() {
   const nonPaid = rawRows.filter(r => (r['Status'] || '').trim().toUpperCase() !== 'PAID');
   const rows = paidOnly ? rawRows.filter(r => (r['Status'] || '').trim().toUpperCase() === 'PAID') : rawRows;
 
-  // Warning panel
   if (nonPaid.length > 0) {
     warnPanel.style.display = 'block';
     document.getElementById('warnHeadline').textContent =
@@ -475,7 +570,6 @@ function rebuildSummary() {
     warnPanel.style.display = 'none';
   }
 
-  // Group by SKU
   const map = new Map();
   const orderSet = new Set();
   let totalQty = 0, totalValue = 0, totalValueGst = 0;
@@ -484,12 +578,9 @@ function rebuildSummary() {
     const sku = (r['SKU'] || '').trim();
     if (!sku) return;
     const qty = parseInt(r['Quantity'], 10) || 0;
-    // Amazon's "Item Cost" is already the EXTENDED ex-GST line amount for this
-    // SKU/order — NOT a per-unit price. Do not multiply by qty, or totals will
-    // overstate whenever qty > 1.
     const lineValue = parseCost(r['Item Cost']);
     const gstRate = parseFloat(String(r['Tax Rate'] || '0').replace('%', '')) / 100 || 0;
-    const lineValueGst = lineValue * (1 + gstRate);
+    const lineValueGst = Math.round(lineValue * (1 + gstRate) * 100) / 100;
     orderSet.add(r['Order ID']);
     totalQty += qty;
     totalValue += lineValue;
@@ -528,7 +619,6 @@ function rebuildSummary() {
   statsBar.style.display = 'grid';
   toolbar.style.display = 'flex';
   tableWrap.style.display = 'block';
-
 
   renderTable();
 }
@@ -582,7 +672,7 @@ function escapeHtml(s) {
 
 function buildExportRows() {
   const sorted = [...summaryRows].sort((a, b) => a.sku.localeCompare(b.sku));
-  const header = ['SKU', 'Item Title', 'Total Qty', 'Total Value (ex GST)', 'Total Value (inc GST)', 'Avg Unit Price (ex GST)', '# Orders', 'Order Refs'];
+  const header = ['SKU', 'Item Title', 'Total Qty', 'Total Value (ex GST)', 'Total Value (inc GST)', 'Unit Cost (ex GST)', '# Orders', 'Order Refs'];
   const body = sorted.map(r => [r.sku, r.title, r.qty, r.value.toFixed(2), r.valueGst.toFixed(2), r.avg.toFixed(2), r.orders, r.refs]);
   return [header, ...body];
 }
@@ -596,8 +686,6 @@ function downloadCsv() {
   const label = (document.getElementById('monthInput').value || 'batch').trim().replace(/\s+/g, '_');
   const filename = `Amazon_SKU_Summary_${label}.csv`;
 
-  // Data-URI download: more reliable than a Blob URL when this file is opened
-  // directly from disk (file://), where some browsers block Blob downloads.
   const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent('\uFEFF' + csv);
   const a = document.createElement('a');
   a.href = dataUri;
